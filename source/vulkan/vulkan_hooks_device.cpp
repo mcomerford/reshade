@@ -1395,7 +1395,7 @@ VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache p
 	RESHADE_VULKAN_GET_DEVICE_DISPATCH_PTR(CreateGraphicsPipelines, device_impl);
 
 #if RESHADE_ADDON >= 2
-	// Disable custom allocator when pipeline may be overriden, so corresponding 'vkDestroyPipeline' is not called with mismatching callbacks
+	// Disable custom allocator when pipeline may be overridden, so corresponding 'vkDestroyPipeline' is not called with mismatching callbacks
 	if (reshade::has_addon_event<reshade::addon_event::create_pipeline>())
 		pAllocator = nullptr;
 
@@ -1664,7 +1664,7 @@ VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice device, VkPipelineCache pi
 	RESHADE_VULKAN_GET_DEVICE_DISPATCH_PTR(CreateComputePipelines, device_impl);
 
 #if RESHADE_ADDON >= 2
-	// Disable custom allocator when pipeline may be overriden, so corresponding 'vkDestroyPipeline' is not called with mismatching callbacks
+	// Disable custom allocator when pipeline may be overridden, so corresponding 'vkDestroyPipeline' is not called with mismatching callbacks
 	if (reshade::has_addon_event<reshade::addon_event::create_pipeline>())
 		pAllocator = nullptr;
 
@@ -1749,7 +1749,7 @@ VkResult VKAPI_CALL vkCreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOp
 	RESHADE_VULKAN_GET_DEVICE_DISPATCH_PTR(CreateRayTracingPipelinesKHR, device_impl);
 
 #if RESHADE_ADDON >= 2
-	// Disable custom allocator when pipeline may be overriden, so corresponding 'vkDestroyPipeline' is not called with mismatching callbacks
+	// Disable custom allocator when pipeline may be overridden, so corresponding 'vkDestroyPipeline' is not called with mismatching callbacks
 	if (reshade::has_addon_event<reshade::addon_event::create_pipeline>())
 		pAllocator = nullptr;
 
@@ -1903,10 +1903,9 @@ VkResult VKAPI_CALL vkCreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOp
 			static_assert(sizeof(*pPipelines) == sizeof(reshade::api::pipeline));
 
 			assert(deferredOperation == VK_NULL_HANDLE);
-			assert(create_info.pNext == nullptr); // 'device_impl::create_pipeline' does not support extension structures
 
 			result = device_impl->create_pipeline(
-				reshade::api::pipeline_layout { (uint64_t)create_info.layout }, static_cast<uint32_t>(subobjects.size()), subobjects.data(), reinterpret_cast<reshade::api::pipeline *>(&pPipelines[i])) ? VK_SUCCESS : VK_ERROR_OUT_OF_HOST_MEMORY;
+				reshade::api::pipeline_layout { (uint64_t)create_info.layout }, static_cast<uint32_t>(subobjects.size()), subobjects.data(), reinterpret_cast<reshade::api::pipeline *>(&pPipelines[i]), &create_info) ? VK_SUCCESS : VK_ERROR_OUT_OF_HOST_MEMORY;
 		}
 		else
 		{
@@ -1968,7 +1967,7 @@ VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice device, const VkPipelineLayo
 
 	VkResult result = VK_SUCCESS;
 #if RESHADE_ADDON >= 2
-	// Disable custom allocator when pipeline layout may be overriden, so corresponding 'vkDestroyPipelineLayout' is not called with mismatching callbacks
+	// Disable custom allocator when pipeline layout may be overridden, so corresponding 'vkDestroyPipelineLayout' is not called with mismatching callbacks
 	if (reshade::has_addon_event<reshade::addon_event::create_pipeline_layout>())
 		pAllocator = nullptr;
 
